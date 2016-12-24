@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /*
     Copyright Giuseppe Di Cillo (www.coagula.org)
     Contact: dicillo@coagula.org
