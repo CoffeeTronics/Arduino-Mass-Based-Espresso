@@ -41,7 +41,7 @@ static void menuChanged(MenuChangeEvent changed);
 
 RTC_DS1307 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-char monthsOfTheYear[12][3] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+//char monthsOfTheYear[12][3] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 static int pinA = 2; // Our first hardware interrupt pin is digital pin 2
 static int pinB = 3; // Our second hardware interrupt pin is digital pin 3
@@ -83,7 +83,7 @@ void setup() {
   pinMode(pinB, INPUT_PULLUP); // set pinB as an input, pulled HIGH to the logic voltage (5V or 3.3V for most cases)
   attachInterrupt(0,PinA,RISING); // set an interrupt on PinA, looking for a rising edge signal and executing the "PinA" Interrupt Service Routine (below)
   attachInterrupt(1,PinB,RISING); // set an interrupt on PinB, looking for a rising edge signal and executing the "PinB" Interrupt Service Routine (below)
-  
+
   Serial.begin(115200);
   if (! rtc.begin()) {
     lcd.setCursor(0,0);
@@ -91,10 +91,10 @@ void setup() {
     Serial.println("Couldn't find RTC");
     while (1);
   }
-  
-  
+
+
   //Serial.begin(115200);
-  
+
   lcd.begin(16, 2);
   lcd.print("Espresso Control");
   delay(1000);
@@ -107,7 +107,7 @@ void setup() {
   menu1Item2.add(menuItem2SubItem1).addRight(menuItem2SubItem2).addRight(menuItem3SubItem3);
   menu.toRoot();
   lcd.setCursor(0, 0);
-  
+
 
 }  // setup()...
 
@@ -120,7 +120,7 @@ void loop() {
   readButtons();  //I splitted button reading and navigation in two procedures because
   navigateMenus();  //in some situations I want to use the button for other purpose (eg. to change some settings)
 
-  
+
 
 } //loop()...
 
@@ -170,11 +170,11 @@ void  readButtons() { //read buttons status
     if(buttonState == LOW){
       encoderButtonPressed = true;
       Serial.println("Encoder Button Pressed!");
-    } 
+    }
     else encoderButtonPressed = false;
   }
-  
-  
+
+
   if(oldEncPos != encoderPos){
     if (encoderPos > oldEncPos){
       moveMenuRight = true;
@@ -220,7 +220,7 @@ void navigateMenus() {
         menu.moveDown();
        }
   }
-  
+
 }
 
 void PinA(){
@@ -254,11 +254,9 @@ void ds1307RTC(){
   lcd.print(now.day());
   lcd.print("/");
   lcd.print(now.month());lcd.print(" ");
-  lcd.print(now.hour()); lcd.print(":"); 
-  lcd.print(now.minute()); lcd.print(":"); 
+  lcd.print(now.hour()); lcd.print(":");
+  lcd.print(now.minute()); lcd.print(":");
   lcd.print(now.second());
   lcd.print("  ");
-    
+
 }
-
-

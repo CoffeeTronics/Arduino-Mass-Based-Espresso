@@ -1,0 +1,29 @@
+Once a job is completed, remove from "TO BE COMPLETED" and add it to "COMPLETED". Add your name after job
+
+
+TO BE COMPLETED
+RTC set preheat and turnoff times/days in Menu 
+Menu - add MenuItem change set point (brew and steam)
+Menu - add MenuItem change temp scale (C and F)
+Menu - add MenuItem manual tune values (P,I,D)
+Menu - add MenuItem change preinfuson and brew pump characteristics
+Use Silvia front switches as uC inputs using PS2505
+    Brew switch on - starts preinfusion, turns on heater, tares scale, starts shot timer
+    Brew switch off - turns off pump, switch heater control back to PID loop, displays shot time and shot mass, 
+        stores last 5(?) shot times, coffee grinds and shot masses in linked list
+    Steam switch on - change to steam setpoint
+    Steam switch off - change back to brew setpoint
+PID output to control boiler
+Load cell HX711 circuit
+Calibrate load cell
+
+
+
+
+COMPLETED
+5V Power supply                                                         Ross
+Basic Menu using rotary encoder and LCD                                 Ross
+RTC time displayed on LCD                                               Ross
+Thermistor signal conditioning circuit (RC filter and op-amp buffer)    Ross
+Temp displayed on 7-segment bubble display                              Ross
+Code to measure temp from thermistor and calibrate using LM35           Ross                 

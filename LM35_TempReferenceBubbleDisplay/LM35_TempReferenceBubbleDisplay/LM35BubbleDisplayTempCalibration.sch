@@ -3073,6 +3073,64 @@ SMT- SWCH-08247</description>
 </deviceset>
 </devicesets>
 </library>
+<library name="RossParts">
+<packages>
+<package name="TO220V">
+<wire x1="5.08" y1="1.397" x2="4.953" y2="-1.524" width="0.127" layer="21"/>
+<wire x1="4.699" y1="-1.778" x2="4.953" y2="-1.524" width="0.127" layer="21"/>
+<wire x1="4.699" y1="-1.778" x2="-4.699" y2="-1.778" width="0.127" layer="21"/>
+<wire x1="-4.953" y1="-1.524" x2="-4.699" y2="-1.778" width="0.127" layer="21"/>
+<wire x1="-4.953" y1="-1.524" x2="-5.08" y2="1.397" width="0.127" layer="21"/>
+<circle x="-4.4958" y="-1.1684" radius="0.254" width="0.127" layer="21"/>
+<pad name="1" x="-2.54" y="0" drill="1.016" shape="long" rot="R90"/>
+<pad name="2" x="0" y="0" drill="1.016" shape="long" rot="R90"/>
+<pad name="3" x="2.54" y="0" drill="1.016" shape="long" rot="R90"/>
+<text x="-5.08" y="-3.5052" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<text x="-5.08" y="-5.08" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
+<text x="-3.175" y="-0.635" size="1.27" layer="51" ratio="10">1</text>
+<text x="-0.635" y="-0.635" size="1.27" layer="51" ratio="10">2</text>
+<text x="1.905" y="-0.635" size="1.27" layer="51" ratio="10">3</text>
+<rectangle x1="-5.334" y1="1.778" x2="5.334" y2="2.54" layer="21"/>
+<rectangle x1="-5.334" y1="1.27" x2="-3.429" y2="1.778" layer="21"/>
+<rectangle x1="-1.651" y1="1.27" x2="-0.889" y2="1.778" layer="21"/>
+<rectangle x1="-3.429" y1="1.27" x2="-1.651" y2="1.778" layer="51"/>
+<rectangle x1="0.889" y1="1.27" x2="1.651" y2="1.778" layer="21"/>
+<rectangle x1="3.429" y1="1.27" x2="5.334" y2="1.778" layer="21"/>
+<rectangle x1="-0.889" y1="1.27" x2="0.889" y2="1.778" layer="51"/>
+<rectangle x1="1.651" y1="1.27" x2="3.429" y2="1.778" layer="51"/>
+</package>
+</packages>
+<symbols>
+<symbol name="LM35">
+<wire x1="7.62" y1="10.16" x2="7.62" y2="-10.16" width="0.254" layer="94"/>
+<wire x1="7.62" y1="-10.16" x2="-7.62" y2="-10.16" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="-10.16" x2="-7.62" y2="10.16" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="10.16" x2="7.62" y2="10.16" width="0.254" layer="94"/>
+<pin name="V+" x="-12.7" y="7.62" length="middle"/>
+<pin name="VOUT" x="-12.7" y="0" length="middle"/>
+<pin name="GND" x="-12.7" y="-7.62" length="middle"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="LM35" uservalue="yes">
+<gates>
+<gate name="G$1" symbol="LM35" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="TO220V">
+<connects>
+<connect gate="G$1" pin="GND" pad="2"/>
+<connect gate="G$1" pin="V+" pad="1"/>
+<connect gate="G$1" pin="VOUT" pad="3"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -3106,13 +3164,12 @@ SMT- SWCH-08247</description>
 <part name="C5" library="SparkFun-Capacitors" deviceset="CAP" device="EZ" value="0.1uF"/>
 <part name="C6" library="SparkFun-Capacitors" deviceset="CAP" device="EZ" value="1uF"/>
 <part name="C7" library="SparkFun-Capacitors" deviceset="CAP" device="EZ"/>
-<part name="C8" library="SparkFun-Capacitors" deviceset="CAP" device="EZ"/>
-<part name="C9" library="SparkFun-Capacitors" deviceset="CAP" device="EZ"/>
-<part name="C10" library="SparkFun-Capacitors" deviceset="CAP" device="EZ"/>
+<part name="C8" library="SparkFun-Capacitors" deviceset="CAP" device="EZ" value="0.1uF"/>
+<part name="C9" library="SparkFun-Capacitors" deviceset="CAP" device="EZ" value="0.1uF"/>
+<part name="C10" library="SparkFun-Capacitors" deviceset="CAP" device="EZ" value="0.1uF"/>
 <part name="S1" library="SparkFun-Retired" deviceset="TAC_SWITCH" device="PTH" value="TACTILE BUTTON SWITCH"/>
 <part name="R3" library="SparkFun-Passives" deviceset="RESISTOR" device="PTH-1/2W" value="10K"/>
 <part name="SUPPLY6" library="SparkFun-Aesthetics" deviceset="VCC" device=""/>
-<part name="C11" library="SparkFun-Capacitors" deviceset="CAP" device="EZ" value="0.1uF"/>
 <part name="GND6" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="GND7" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="GND8" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
@@ -3135,10 +3192,30 @@ SMT- SWCH-08247</description>
 <part name="SUPPLY10" library="SparkFun-Aesthetics" deviceset="VCC" device=""/>
 <part name="GND15" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="GND16" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
+<part name="SUPPLY11" library="SparkFun-Aesthetics" deviceset="VCC" device=""/>
+<part name="GND17" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
+<part name="C11" library="SparkFun-Capacitors" deviceset="CAP" device="EZ" value="0.1uF"/>
+<part name="C12" library="SparkFun-Capacitors" deviceset="CAP" device="EZ" value="0.1uF"/>
+<part name="C13" library="SparkFun-Capacitors" deviceset="CAP" device="EZ" value="0.1uF"/>
+<part name="C14" library="SparkFun-Capacitors" deviceset="CAP" device="EZ" value="0.1uF"/>
+<part name="SUPPLY12" library="SparkFun-Aesthetics" deviceset="VCC" device=""/>
+<part name="SUPPLY13" library="SparkFun-Aesthetics" deviceset="VCC" device=""/>
+<part name="U$1" library="RossParts" deviceset="LM35" device=""/>
+<part name="GND18" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
+<part name="GND19" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
+<part name="C15" library="SparkFun-Capacitors" deviceset="CAP" device="EZ" value="0.1uF"/>
+<part name="SUPPLY15" library="SparkFun-Aesthetics" deviceset="VCC" device=""/>
 </parts>
 <sheets>
 <sheet>
 <plain>
+<text x="142.24" y="111.76" size="1.778" layer="91">Thermistor Low Pass Filter
+Time Constant 0.1s
+Op-Amp Rail to Rail Input/Output Buffer</text>
+<text x="124.46" y="142.24" size="1.778" layer="91">LM35 Precision
+Temp Sensor
+Use to calibrate
+Thermistor CCT</text>
 </plain>
 <instances>
 <instance part="IC1" gate="G$1" x="55.88" y="43.18"/>
@@ -3147,8 +3224,8 @@ SMT- SWCH-08247</description>
 <instance part="C1" gate="G$1" x="25.4" y="53.34" rot="R90"/>
 <instance part="C2" gate="G$1" x="25.4" y="48.26" rot="R90"/>
 <instance part="SUPPLY1" gate="1" x="63.5" y="93.98" rot="R180"/>
-<instance part="SUPPLY2" gate="1" x="-38.1" y="93.98"/>
-<instance part="SUPPLY3" gate="1" x="-27.94" y="93.98"/>
+<instance part="SUPPLY2" gate="1" x="2.54" y="104.14"/>
+<instance part="SUPPLY3" gate="1" x="12.7" y="104.14"/>
 <instance part="SUPPLY4" gate="1" x="71.12" y="78.74" rot="R90"/>
 <instance part="SUPPLY5" gate="1" x="7.62" y="55.88" rot="R90"/>
 <instance part="GND1" gate="1" x="15.24" y="50.8" rot="R270"/>
@@ -3167,20 +3244,19 @@ SMT- SWCH-08247</description>
 <instance part="C5" gate="G$1" x="22.86" y="35.56"/>
 <instance part="C6" gate="G$1" x="185.42" y="78.74"/>
 <instance part="C7" gate="G$1" x="172.72" y="93.98" rot="R90"/>
-<instance part="C8" gate="G$1" x="269.24" y="101.6"/>
-<instance part="C9" gate="G$1" x="243.84" y="91.44"/>
-<instance part="C10" gate="G$1" x="266.7" y="88.9"/>
+<instance part="C8" gate="G$1" x="30.48" y="63.5" rot="R90"/>
+<instance part="C9" gate="G$1" x="172.72" y="81.28" rot="R90"/>
+<instance part="C10" gate="G$1" x="147.32" y="53.34"/>
 <instance part="S1" gate="S" x="78.74" y="104.14"/>
 <instance part="R3" gate="G$1" x="78.74" y="78.74"/>
 <instance part="SUPPLY6" gate="1" x="20.32" y="33.02" rot="R90"/>
-<instance part="C11" gate="G$1" x="30.48" y="63.5" rot="R90"/>
 <instance part="GND6" gate="1" x="5.08" y="66.04" rot="R270"/>
-<instance part="GND7" gate="1" x="-27.94" y="53.34"/>
-<instance part="GND8" gate="1" x="-30.48" y="40.64"/>
-<instance part="GND9" gate="1" x="-40.64" y="40.64"/>
-<instance part="GND10" gate="1" x="-38.1" y="50.8"/>
-<instance part="SUPPLY7" gate="1" x="137.16" y="58.42" smashed="yes" rot="R270">
-<attribute name="VALUE" x="138.176" y="64.516" size="1.778" layer="96" rot="R270"/>
+<instance part="GND7" gate="1" x="12.7" y="93.98"/>
+<instance part="GND8" gate="1" x="33.02" y="93.98"/>
+<instance part="GND9" gate="1" x="22.86" y="93.98"/>
+<instance part="GND10" gate="1" x="2.54" y="93.98"/>
+<instance part="SUPPLY7" gate="1" x="147.32" y="58.42" smashed="yes">
+<attribute name="VALUE" x="141.224" y="59.436" size="1.778" layer="96"/>
 </instance>
 <instance part="GND11" gate="1" x="114.3" y="35.56" rot="R270"/>
 <instance part="SUPPLY8" gate="1" x="203.2" y="101.6"/>
@@ -3198,6 +3274,19 @@ SMT- SWCH-08247</description>
 <instance part="SUPPLY10" gate="1" x="167.64" y="101.6"/>
 <instance part="GND15" gate="1" x="167.64" y="76.2"/>
 <instance part="GND16" gate="1" x="177.8" y="93.98" rot="R90"/>
+<instance part="SUPPLY11" gate="1" x="175.26" y="81.28" rot="R270"/>
+<instance part="GND17" gate="1" x="147.32" y="48.26"/>
+<instance part="C11" gate="G$1" x="2.54" y="99.06"/>
+<instance part="C12" gate="G$1" x="12.7" y="99.06"/>
+<instance part="C13" gate="G$1" x="22.86" y="99.06"/>
+<instance part="C14" gate="G$1" x="33.02" y="99.06"/>
+<instance part="SUPPLY12" gate="1" x="22.86" y="104.14"/>
+<instance part="SUPPLY13" gate="1" x="33.02" y="104.14"/>
+<instance part="U$1" gate="G$1" x="132.08" y="127"/>
+<instance part="GND18" gate="1" x="119.38" y="116.84"/>
+<instance part="GND19" gate="1" x="91.44" y="124.46"/>
+<instance part="C15" gate="G$1" x="91.44" y="129.54"/>
+<instance part="SUPPLY15" gate="1" x="91.44" y="139.7"/>
 </instances>
 <busses>
 <bus name="C1,C2,C3,C4">
@@ -3247,6 +3336,9 @@ SMT- SWCH-08247</description>
 <segment>
 <pinref part="U1" gate="U1" pin="VCC"/>
 <pinref part="SUPPLY7" gate="1" pin="VCC"/>
+<wire x1="147.32" y1="58.42" x2="137.16" y2="58.42" width="0.1524" layer="91"/>
+<pinref part="C10" gate="G$1" pin="1"/>
+<junction x="147.32" y="58.42"/>
 </segment>
 <segment>
 <pinref part="SUPPLY8" gate="1" pin="VCC"/>
@@ -3284,6 +3376,34 @@ SMT- SWCH-08247</description>
 <pinref part="C7" gate="G$1" pin="1"/>
 <junction x="167.64" y="93.98"/>
 </segment>
+<segment>
+<pinref part="SUPPLY11" gate="1" pin="VCC"/>
+<pinref part="C9" gate="G$1" pin="2"/>
+</segment>
+<segment>
+<pinref part="C11" gate="G$1" pin="1"/>
+<pinref part="SUPPLY2" gate="1" pin="VCC"/>
+</segment>
+<segment>
+<pinref part="C12" gate="G$1" pin="1"/>
+<pinref part="SUPPLY3" gate="1" pin="VCC"/>
+</segment>
+<segment>
+<pinref part="C13" gate="G$1" pin="1"/>
+<pinref part="SUPPLY12" gate="1" pin="VCC"/>
+</segment>
+<segment>
+<pinref part="C14" gate="G$1" pin="1"/>
+<pinref part="SUPPLY13" gate="1" pin="VCC"/>
+</segment>
+<segment>
+<pinref part="C15" gate="G$1" pin="1"/>
+<pinref part="SUPPLY15" gate="1" pin="VCC"/>
+<wire x1="91.44" y1="139.7" x2="91.44" y2="134.62" width="0.1524" layer="91"/>
+<pinref part="U$1" gate="G$1" pin="V+"/>
+<wire x1="119.38" y1="134.62" x2="91.44" y2="134.62" width="0.1524" layer="91"/>
+<junction x="91.44" y="134.62"/>
+</segment>
 </net>
 <net name="GND" class="0">
 <segment>
@@ -3304,10 +3424,6 @@ SMT- SWCH-08247</description>
 <pinref part="C5" gate="G$1" pin="1"/>
 <wire x1="22.86" y1="40.64" x2="33.02" y2="40.64" width="0.1524" layer="91"/>
 <junction x="22.86" y="40.64"/>
-</segment>
-<segment>
-<pinref part="C11" gate="G$1" pin="1"/>
-<pinref part="GND2" gate="1" pin="GND"/>
 </segment>
 <segment>
 <pinref part="C1" gate="G$1" pin="1"/>
@@ -3345,14 +3461,48 @@ SMT- SWCH-08247</description>
 <pinref part="GND14" gate="1" pin="GND"/>
 </segment>
 <segment>
-<pinref part="MCP1" gate="A" pin="VSS"/>
-<pinref part="GND15" gate="1" pin="GND"/>
-<wire x1="165.1" y1="81.28" x2="167.64" y2="81.28" width="0.1524" layer="91"/>
-<wire x1="167.64" y1="81.28" x2="167.64" y2="78.74" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="C7" gate="G$1" pin="2"/>
 <pinref part="GND16" gate="1" pin="GND"/>
+</segment>
+<segment>
+<pinref part="GND2" gate="1" pin="GND"/>
+<pinref part="C8" gate="G$1" pin="1"/>
+</segment>
+<segment>
+<pinref part="GND15" gate="1" pin="GND"/>
+<pinref part="C9" gate="G$1" pin="1"/>
+<wire x1="167.64" y1="78.74" x2="167.64" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="MCP1" gate="A" pin="VSS"/>
+<wire x1="167.64" y1="81.28" x2="165.1" y2="81.28" width="0.1524" layer="91"/>
+<junction x="167.64" y="81.28"/>
+</segment>
+<segment>
+<pinref part="C10" gate="G$1" pin="2"/>
+<pinref part="GND17" gate="1" pin="GND"/>
+</segment>
+<segment>
+<pinref part="C11" gate="G$1" pin="2"/>
+<pinref part="GND10" gate="1" pin="GND"/>
+</segment>
+<segment>
+<pinref part="C12" gate="G$1" pin="2"/>
+<pinref part="GND7" gate="1" pin="GND"/>
+</segment>
+<segment>
+<pinref part="C13" gate="G$1" pin="2"/>
+<pinref part="GND9" gate="1" pin="GND"/>
+</segment>
+<segment>
+<pinref part="C14" gate="G$1" pin="2"/>
+<pinref part="GND8" gate="1" pin="GND"/>
+</segment>
+<segment>
+<pinref part="U$1" gate="G$1" pin="GND"/>
+<pinref part="GND18" gate="1" pin="GND"/>
+</segment>
+<segment>
+<pinref part="C15" gate="G$1" pin="2"/>
+<pinref part="GND19" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="N$3" class="0">
@@ -3372,12 +3522,6 @@ SMT- SWCH-08247</description>
 <wire x1="33.02" y1="76.2" x2="83.82" y2="76.2" width="0.1524" layer="91"/>
 <wire x1="83.82" y1="76.2" x2="83.82" y2="78.74" width="0.1524" layer="91"/>
 <junction x="83.82" y="78.74"/>
-</segment>
-</net>
-<net name="N$4" class="0">
-<segment>
-<pinref part="IC1" gate="G$1" pin="AREF"/>
-<pinref part="C11" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="N$5" class="0">
@@ -3649,11 +3793,26 @@ SMT- SWCH-08247</description>
 <pinref part="IC1" gate="G$1" pin="(PCI8/ADC0)PC0"/>
 <wire x1="104.14" y1="71.12" x2="88.9" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="MCP1" gate="A" pin="VIN-"/>
-<wire x1="165.1" y1="86.36" x2="172.72" y2="86.36" width="0.1524" layer="91"/>
-<wire x1="172.72" y1="86.36" x2="172.72" y2="71.12" width="0.1524" layer="91"/>
-<wire x1="172.72" y1="71.12" x2="127" y2="71.12" width="0.1524" layer="91"/>
-<wire x1="127" y1="71.12" x2="127" y2="93.98" width="0.1524" layer="91"/>
+<wire x1="165.1" y1="86.36" x2="180.34" y2="86.36" width="0.1524" layer="91"/>
+<wire x1="180.34" y1="86.36" x2="180.34" y2="66.04" width="0.1524" layer="91"/>
+<wire x1="180.34" y1="66.04" x2="127" y2="66.04" width="0.1524" layer="91"/>
+<wire x1="127" y1="66.04" x2="127" y2="93.98" width="0.1524" layer="91"/>
 <junction x="127" y="93.98"/>
+</segment>
+</net>
+<net name="N$4" class="0">
+<segment>
+<pinref part="IC1" gate="G$1" pin="AREF"/>
+<pinref part="C8" gate="G$1" pin="2"/>
+</segment>
+</net>
+<net name="N$15" class="0">
+<segment>
+<pinref part="U$1" gate="G$1" pin="VOUT"/>
+<wire x1="119.38" y1="127" x2="106.68" y2="127" width="0.1524" layer="91"/>
+<wire x1="106.68" y1="127" x2="106.68" y2="68.58" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="G$1" pin="(PCI9/ADC1)PC1"/>
+<wire x1="106.68" y1="68.58" x2="88.9" y2="68.58" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
@@ -3661,4 +3820,10 @@ SMT- SWCH-08247</description>
 </sheets>
 </schematic>
 </drawing>
+<compatibility>
+<note version="6.3" minversion="6.2.2" severity="warning">
+Since Version 6.2.2 text objects can contain more than one line,
+which will not be processed correctly with this version.
+</note>
+</compatibility>
 </eagle>

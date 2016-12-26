@@ -1,19 +1,29 @@
+#include <Arduino.h>
+
 /*
    This code is made from two sources
    http://randomnerdtutorials.com
    http://playground.arduino.cc/ComponentLib/Thermistor4
 */
-#include <Thermistor4.h>
+//#include <Thermistor4.h>
 
 //Inside thermistor on Arduino ADC pin 0
-#define THERMISTORPinInside 0
+//#define THERMISTORPinInside 0
+
+float tempC;
+//int reading;
+int tempPin = A1;
+
+unsigned long reading;
+unsigned long sum;
+
 
 // instance of Thermistor Object
-Thermistor4 ThermistorInside;
+//Thermistor4 ThermistorInside;
 //various temp variables for testing.
-unsigned int i, ADCAverage;
-double tempC;
-double tempF;
+//unsigned int i, ADCAverage;
+//double tempC;
+//double tempF;
 
 const int digitPins[4] = {9, 10, 11, 12}; //4 common CATHODE pins of the display.
 const int clockPin = 2;    //74HC595 Pin 11
@@ -50,23 +60,26 @@ void setup() {
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
 
-  ThermistorInside.Pin = THERMISTORPinInside; //Set the pin number.
+  analogReference(INTERNAL);
+  Serial.begin(115200);
 
-  ThermistorInside.SetUp(); //Sets up the analog read pin for internal AVR.
+  //  ThermistorInside.Pin = THERMISTORPinInside; //Set the pin number.
+
+  //  ThermistorInside.SetUp(); //Sets up the analog read pin for internal AVR.
 
   //pow() is used elsewhere so might as well be used here.
-  ThermistorInside.BitResolution = pow(2, 10) - 1; //ATmega's have a 10bit ADC (2^10-1).
+  //  ThermistorInside.BitResolution = pow(2, 10) - 1; //ATmega's have a 10bit ADC (2^10-1).
 
-  ThermistorInside.VoltageSupply = 4.988;   //4.4481;  // Metered supply across voltage divider
-  ThermistorInside.ResistanceFixed = 8250;   ///Fixed resistor in the divider. Measured in ohms. Meter this for accuracy.
+  //  ThermistorInside.VoltageSupply = 4.944;   //4.4481;  // Metered supply across voltage divider
+  //  ThermistorInside.ResistanceFixed = 8250;   ///Fixed resistor in the divider. Measured in ohms. Meter this for accuracy.
 
-  ThermistorInside.Offset = 1.0; //adjust temperature in Kelvin up or down a little to account for unforseen variations.
+  //  ThermistorInside.Offset = 1.1; //adjust temperature in Kelvin up or down a little to account for unforseen variations.
 
   // Steinhart-Hart coefficients. Taken from datasheet provided from manufacturer
-  ThermistorInside.SteinhartA1 = 5.99357907117746e-004;   // First Steinhart-Hart coefficient.
-  ThermistorInside.SteinhartA2 = 2.31247850239102e-004;   // Second Steinhart-Hart coefficient.
-  ThermistorInside.SteinhartA3 = 5.61924102167737e-008;   // Third Steinhart-Hart coefficient.
-  ThermistorInside.SteinhartA4 = 3.23406799250025e-011;   // Fourth Steinhart-Hart coefficient.
+  //  ThermistorInside.SteinhartA1 = 5.99357907117746e-004;   // First Steinhart-Hart coefficient.
+  //  ThermistorInside.SteinhartA2 = 2.31247850239102e-004;   // Second Steinhart-Hart coefficient.
+  //  ThermistorInside.SteinhartA3 = 5.61924102167737e-008;   // Third Steinhart-Hart coefficient.
+  //  ThermistorInside.SteinhartA4 = 3.23406799250025e-011;   // Fourth Steinhart-Hart coefficient.
 
 
 }   // end setup
@@ -76,33 +89,33 @@ void setup() {
 
 
 void loop() {
-/******************************
- * Used for debugging purposes.
- * Shows resolution at bottom, middle and top of ADC range
-#if THERMISTORDEBUG
-  //Show the debugging information:
-  Serial.println("");
-  Serial.println("ThermistorInside Debug: ");
-  ThermistorInside.Thermistor4SerialPrint();
-  Serial.println("");
-  //Serial.println("ThermistorOutside Debug: ");
-  //ThermistorOutside.Thermistor4SerialPrint();
-  //Serial.println("");
-#endif
-*/
+  /******************************
+     Used for debugging purposes.
+     Shows resolution at bottom, middle and top of ADC range
+    #if THERMISTORDEBUG
+    //Show the debugging information:
+    Serial.println("");
+    Serial.println("ThermistorInside Debug: ");
+    ThermistorInside.Thermistor4SerialPrint();
+    Serial.println("");
+    //Serial.println("ThermistorOutside Debug: ");
+    //ThermistorOutside.Thermistor4SerialPrint();
+    //Serial.println("");
+    #endif
+  */
 
-  ThermistorInside.ReadCalculate(3);
+  //  ThermistorInside.ReadCalculate(3);
 
   //Example of averaging 10 reads. Note that analogRead() isn't very fast.
   //Part of this code has to be done manually, then call ReadADC() with the averaged number.
   //Note that an unsigned int is only 16 bits. Do not exceed it or it will roll over and return trash.
 
-  ADCAverage = 0; //reset the variable for each loop.
-  for (i = 0; i < 20; i++) {
-    ADCAverage += analogRead(THERMISTORPinInside);
-    delayMicroseconds(1); //add an extra delay to spread the average out a little more
-  }
-  ThermistorInside.ReadADC(ADCAverage / 20); //call ReadADC() with the averaged value.
+  //  ADCAverage = 0; //reset the variable for each loop.
+  //  for (i = 0; i < 20; i++) {
+  //    ADCAverage += analogRead(THERMISTORPinInside);
+  //    delayMicroseconds(1); //add an extra delay to spread the average out a little more
+  //  }
+  //  ThermistorInside.ReadADC(ADCAverage / 20); //call ReadADC() with the averaged value.
 
   //Report as normal from here on out.
   //Serial.print("ThermistorInside Averaged (Centigrade, Farenheit): ");
@@ -110,8 +123,23 @@ void loop() {
   //Serial.print(", ");
   //Serial.println(ThermistorInside.GetFarenheit(), 4);
 
-  printDisp(ThermistorInside.GetFarenheit(), 2000);
-  printDisp(ThermistorInside.GetCentigrade(), 2000);
+  //printDisp(ThermistorInside.GetFarenheit(), 2000);
+  //printDisp(ThermistorInside.GetCentigrade(), 2000);
+
+  sum = 0; reading = 0;
+  
+  for (int i=0; i<99; i++){
+    reading = analogRead(tempPin);
+    sum += reading;
+  }
+
+tempC = (sum/100) / 9.31;
+
+  //reading = analogRead(tempPin);
+  //tempC = reading / 9.31;
+  Serial.println(tempC);
+  //delay(1000);
+  printDisp(tempC, 2000);
 
 
 }       // end loop

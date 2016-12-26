@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /*
    This code is made from two sources
    http://randomnerdtutorials.com
@@ -8,20 +10,15 @@
 //Inside thermistor on Arduino ADC pin 0
 //#define THERMISTORPinInside 0
 
-float tempC;
-//int reading;
-int tempPin = A1;
-
-unsigned long reading;
-unsigned long sum;
-
-
 // instance of Thermistor Object
 //Thermistor4 ThermistorInside;
 //various temp variables for testing.
 //unsigned int i, ADCAverage;
 //double tempC;
 //double tempF;
+
+long sum;
+double average;
 
 const int digitPins[4] = {9, 10, 11, 12}; //4 common CATHODE pins of the display.
 const int clockPin = 2;    //74HC595 Pin 11
@@ -58,9 +55,6 @@ void setup() {
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
 
-  analogReference(INTERNAL);
-  Serial.begin(115200);
-
   //  ThermistorInside.Pin = THERMISTORPinInside; //Set the pin number.
 
   //  ThermistorInside.SetUp(); //Sets up the analog read pin for internal AVR.
@@ -68,7 +62,7 @@ void setup() {
   //pow() is used elsewhere so might as well be used here.
   //  ThermistorInside.BitResolution = pow(2, 10) - 1; //ATmega's have a 10bit ADC (2^10-1).
 
-  //  ThermistorInside.VoltageSupply = 4.944;   //4.4481;  // Metered supply across voltage divider
+  //  ThermistorInside.VoltageSupply = 4.4;   //4.4481;  // Metered supply across voltage divider
   //  ThermistorInside.ResistanceFixed = 8250;   ///Fixed resistor in the divider. Measured in ohms. Meter this for accuracy.
 
   //  ThermistorInside.Offset = 1.1; //adjust temperature in Kelvin up or down a little to account for unforseen variations.
@@ -121,24 +115,20 @@ void loop() {
   //Serial.print(", ");
   //Serial.println(ThermistorInside.GetFarenheit(), 4);
 
-  //printDisp(ThermistorInside.GetFarenheit(), 2000);
-  //printDisp(ThermistorInside.GetCentigrade(), 2000);
+  //  printDisp(ThermistorInside.GetFarenheit(), 2000);
+  //  printDisp(ThermistorInside.GetCentigrade(), 2000);
 
-  sum = 0; reading = 0;
-  
-  for (int i=0; i<99; i++){
-    reading = analogRead(tempPin);
-    sum += reading;
+
+  average = 0.00;
+  sum = 0;
+  for (int i = 0; i <= 99; i++) {
+    sum += readVcc();
   }
-
-tempC = (sum/100) / 9.31;
-
-  //reading = analogRead(tempPin);
-  //tempC = reading / 9.31;
-  Serial.println(tempC);
-  //delay(1000);
-  printDisp(tempC, 2000);
-
+  average = double(sum / 100.0);
+  
+  printDisp(average,2000);
+  Serial.println(average);    //( readVcc(), DEC );
+  //delay(100);
 
 }       // end loop
 
@@ -147,17 +137,27 @@ void printDisp(float value, int msec) {
   //Serial.println("Gets to printDisplay()");
   clearDisp();
   //int digitThree, digitTwo, digitOne, digitZero;
-  digitBuffer[3] = int(value / 100); // return hundreds value
-  digitBuffer[2] = int(((value - (digitBuffer[3] * 100))) / 10);  // return tens value
-  digitBuffer[1] = int ((value - (digitBuffer[3] * 100) - (digitBuffer[2] * 10))); // return units value
-  digitBuffer[0] = int ((value - (digitBuffer[3] * 100) - (digitBuffer[2] * 10) - (digitBuffer[1])) * 10);  // return first decimal place value
-  /*
-    for(int i=3; i>=0; i--){
+  //digitBuffer[3] = int(value / 100); // return hundreds value
+  //digitBuffer[2] = int(((value - (digitBuffer[3] * 100))) / 10);  // return tens value
+  //digitBuffer[1] = int ((value - (digitBuffer[3] * 100) - (digitBuffer[2] * 10))); // return units value
+  //digitBuffer[0] = int ((value - (digitBuffer[3] * 100) - (digitBuffer[2] * 10) - (digitBuffer[1])) * 10);  // return first decimal place value
+  
+  digitBuffer[3] = int(value / 1000); // return hundreds value
+  digitBuffer[2] = int(((value - (digitBuffer[3] * 1000))) / 100);  // return tens value
+  digitBuffer[1] = int ((value - (digitBuffer[3] * 1000) - (digitBuffer[2] * 100)) / 10); // return units value
+  digitBuffer[0] = int ((value - (digitBuffer[3] * 1000) - (digitBuffer[2] * 100) - (digitBuffer[1]*10)) );  // return first decimal place value
+  //Serial.print("Digit Buffer : ");
+  //Serial.print(digitBuffer[3]);
+  //Serial.print(digitBuffer[2]);
+  //Serial.print(digitBuffer[1]);
+  //Serial.println(digitBuffer[0]);
+      
+      for(int i=3; i>=0; i--){
       Serial.print(digitBuffer[i]);
 
     }
     Serial.println();
-  */
+  
 
 
   //Get it displayed until msec Milliseconds passed
@@ -175,9 +175,9 @@ void updateDisp() {
     clearDisp();
     digitalWrite(digitPins[i], LOW); //Changed to LOW for turning the leds on.
 
-    if (i == 1) //Add decimal dot
-      shiftOut(dataPin, clockPin, LSBFIRST, digit[digitBuffer[i]] | 0b00000001);
-    else
+   // if (i == 1) //Add decimal dot
+   //   shiftOut(dataPin, clockPin, LSBFIRST, digit[digitBuffer[i]] | 0b00000001);
+   // else
       shiftOut(dataPin, clockPin, LSBFIRST, digit[digitBuffer[i]]);
 
     digitalWrite(latchPin, HIGH);
@@ -191,4 +191,17 @@ void clearDisp() {
   for (byte j = 0; j < 4; j++) {
     digitalWrite(digitPins[j], HIGH); // Turns the display off. Changed to HIGH
   }
+}
+
+long readVcc() {
+  long result;
+  // Read 1.1V reference against AVcc
+  ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
+  delay(2); // Wait for Vref to settle
+  ADCSRA |= _BV(ADSC); // Convert
+  while (bit_is_set(ADCSRA, ADSC));
+  result = ADCL;
+  result |= ADCH << 8;
+  result = 1125300L / result; // Back-calculate AVcc in mV
+  return result;
 }
