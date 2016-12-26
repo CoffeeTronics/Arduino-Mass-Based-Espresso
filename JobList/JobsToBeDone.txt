@@ -1,7 +1,11 @@
 Once a job is completed, remove from "TO BE COMPLETED" and add it to "COMPLETED". Add your name after job
 
 
-TO BE COMPLETED
+TO BE COMPLETED (roughly in order of importance)
+Thermistor readings done as a rolling average with outliers rejected
+PID output to control boiler
+Load cell HX711 circuit
+Calibrate load cell
 RTC set preheat and turnoff times/days in Menu 
 Menu - add MenuItem change set point (brew and steam)
 Menu - add MenuItem change temp scale (C and F)
@@ -13,9 +17,9 @@ Use Silvia front switches as uC inputs using PS2505
         stores last 5(?) shot times, coffee grinds and shot masses in linked list
     Steam switch on - change to steam setpoint
     Steam switch off - change back to brew setpoint
-PID output to control boiler
-Load cell HX711 circuit
-Calibrate load cell
+
+
+
 
 
 
@@ -26,4 +30,7 @@ Basic Menu using rotary encoder and LCD                                 Ross
 RTC time displayed on LCD                                               Ross
 Thermistor signal conditioning circuit (RC filter and op-amp buffer)    Ross
 Temp displayed on 7-segment bubble display                              Ross
-Code to measure temp from thermistor and calibrate using LM35           Ross                 
+Code to measure temp from thermistor and calibrate using LM35           Ross   
+
+KNOWN PROBLEMS
+5V supply to thermistor and AVcc drifts over time - Ordered precision voltage regulator
