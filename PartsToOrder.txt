@@ -1,4 +1,19 @@
+Parts Ordered:
+
 16MHz Crystals
+10uF electrolytic capacitors
+BTA06 triacs
+MOC3042 optotriacs
+resistors: 390R, 330R, 3K9
+CR1220 battery clip
+74HC7414 Hex Schmitt Trigger (SOIC only available)
+SOIC-14 to DIP-14 adapter
 
-Relays
+MAXIM SAMPLES: DS1307 and DS3231
 
+
+
+
+Parts Needed:
+
+CR1220 battery
