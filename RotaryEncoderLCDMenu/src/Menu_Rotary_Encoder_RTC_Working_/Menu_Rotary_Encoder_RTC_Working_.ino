@@ -1,4 +1,9 @@
 #include <Arduino.h>
+#include <Wire.h>
+#include <I2C_Anything.h>
+
+const byte SLAVE_ONE_ADDRESS = 42;
+const byte SLAVE_TWO_ADDRESS = 43;
 
 /*
     Copyright Giuseppe Di Cillo (www.coagula.org)
@@ -26,8 +31,8 @@
 */
 
 /*
- * Rotary Encoder Interrupt code ws taken from:
- * http://www.instructables.com/id/Improved-Arduino-Rotary-Encoder-Reading/?ALLSTEPS
+   Rotary Encoder Interrupt code ws taken from:
+   http://www.instructables.com/id/Improved-Arduino-Rotary-Encoder-Reading/?ALLSTEPS
  * */
 #include <MenuBackend.h>    //MenuBackend library - copyright by Alexander Brevig
 #include <LiquidCrystal.h>  //this library is included in the Arduino IDE#include <Wire.h>
@@ -52,8 +57,10 @@ volatile byte oldEncPos = 0; //stores the last encoder position value so we can 
 volatile byte reading = 0; //somewhere to store the direct values we read from our interrupt pins before checking to see if we have moved a whole detent
 
 
-unsigned long timeNow = 0;
-unsigned long timeLast = 0;
+unsigned long timeNowRTC = 0;
+unsigned long timeLastRTC = 0;
+unsigned long timeNowTempRequest = 0;
+unsigned long timeLastTempRequest = 0;
 boolean moveMenuLeft = false;
 boolean moveMenuRight = false;
 boolean encoderButtonPressed = false;
@@ -81,19 +88,28 @@ MenuItem menu1Item3 = MenuItem("Item3");
 void setup() {
   pinMode(pinA, INPUT_PULLUP); // set pinA as an input, pulled HIGH to the logic voltage (5V or 3.3V for most cases)
   pinMode(pinB, INPUT_PULLUP); // set pinB as an input, pulled HIGH to the logic voltage (5V or 3.3V for most cases)
-  attachInterrupt(0,PinA,RISING); // set an interrupt on PinA, looking for a rising edge signal and executing the "PinA" Interrupt Service Routine (below)
-  attachInterrupt(1,PinB,RISING); // set an interrupt on PinB, looking for a rising edge signal and executing the "PinB" Interrupt Service Routine (below)
+  attachInterrupt(0, PinA, RISING); // set an interrupt on PinA, looking for a rising edge signal and executing the "PinA" Interrupt Service Routine (below)
+  attachInterrupt(1, PinB, RISING); // set an interrupt on PinB, looking for a rising edge signal and executing the "PinB" Interrupt Service Routine (below)
 
   Serial.begin(115200);
   if (! rtc.begin()) {
-    lcd.setCursor(0,0);
+    lcd.setCursor(0, 0);
     lcd.print("NO RTC!!");
     Serial.println("Couldn't find RTC");
     while (1);
   }
 
+  if (! rtc.isrunning()) {
+    Serial.println("RTC is NOT running!");
+    // following line sets the RTC to the date & time this sketch was compiled
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    // This line sets the RTC with an explicit date & time, for example to set
+    // January 21, 2014 at 3am you would call:
+    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
+  }
 
-  //Serial.begin(115200);
+
+  Wire.begin();
 
   lcd.begin(16, 2);
   lcd.print("Espresso Control");
@@ -111,14 +127,30 @@ void setup() {
 
 }  // setup()...
 
+double temp;    // used for receiving I2C data
+double output;  // from SLAVE ONE
+
+double mass;  // used for receiving I2C data from SLAVE TWO
+int brewSwitchState;
+boolean extractionComplete;
+
 
 void loop() {
-  timeNow = millis();
-  if ((timeNow - timeLast)>=200){
+  timeNowRTC = millis();
+  if ((timeNowRTC - timeLastRTC) >= 200) {
     ds1307RTC();
+
+  }
+  timeNowTempRequest = millis();
+  if ((timeNowTempRequest - timeLastTempRequest) >= 1000) {
+    requestTemp();
+    requestMassAndSwitchState();
+    timeLastTempRequest = timeNowTempRequest;
   }
   readButtons();  //I splitted button reading and navigation in two procedures because
   navigateMenus();  //in some situations I want to use the button for other purpose (eg. to change some settings)
+
+
 
 
 
@@ -166,8 +198,8 @@ void menuUsed(MenuUseEvent used) {
 
 void  readButtons() { //read buttons status
   buttonState = digitalRead(BUTTON_PIN);
-  if(buttonState != lastButtonState){
-    if(buttonState == LOW){
+  if (buttonState != lastButtonState) {
+    if (buttonState == LOW) {
       encoderButtonPressed = true;
       Serial.println("Encoder Button Pressed!");
     }
@@ -175,58 +207,58 @@ void  readButtons() { //read buttons status
   }
 
 
-  if(oldEncPos != encoderPos){
-    if (encoderPos > oldEncPos){
+  if (oldEncPos != encoderPos) {
+    if (encoderPos > oldEncPos) {
       moveMenuRight = true;
-        oldEncPos = encoderPos;
+      oldEncPos = encoderPos;
 
       //Serial.println(encoderPos);
     }
-    else if(encoderPos < oldEncPos){
+    else if (encoderPos < oldEncPos) {
       moveMenuLeft = true;
-        oldEncPos = encoderPos;
+      oldEncPos = encoderPos;
 
       //Serial.println(encoderPos);
     }
   }
 
 
-/*
-if(oldEncPos != encoderPos) {
-    Serial.println(encoderPos);
-    oldEncPos = encoderPos;
-  }
+  /*
+    if(oldEncPos != encoderPos) {
+      Serial.println(encoderPos);
+      oldEncPos = encoderPos;
+    }
 
-*/
+  */
   lastButtonState = buttonState;
 
 }
 void navigateMenus() {
   MenuItem currentMenu = menu.getCurrent();
 
-  if(moveMenuLeft == true){
+  if (moveMenuLeft == true) {
     moveMenuLeft = false; //reset
     menu.moveLeft();
   }
-  if(moveMenuRight == true){
+  if (moveMenuRight == true) {
     moveMenuRight = false;
     menu.moveRight();
   }
-  if(encoderButtonPressed == true){
+  if (encoderButtonPressed == true) {
     encoderButtonPressed = false;   // reset
-    if(!(currentMenu.moveDown())){  //if the current menu has a child and has been pressed enter then menu navigate to item below
-        menu.use();
-      }else{  //otherwise, if menu has no child and has been pressed enter the current menu is used
-        menu.moveDown();
-       }
+    if (!(currentMenu.moveDown())) { //if the current menu has a child and has been pressed enter then menu navigate to item below
+      menu.use();
+    } else { //otherwise, if menu has no child and has been pressed enter the current menu is used
+      menu.moveDown();
+    }
   }
 
 }
 
-void PinA(){
+void PinA() {
   cli(); //stop interrupts happening before we read pin values
   reading = PIND & 0xC; // read all eight pin values then strip away all but pinA and pinB's values
-  if(reading == B00001100 && aFlag) { //check that we have both pins at detent (HIGH) and that we are expecting detent on this pin's rising edge
+  if (reading == B00001100 && aFlag) { //check that we have both pins at detent (HIGH) and that we are expecting detent on this pin's rising edge
     encoderPos --; //decrement the encoder's position count
     bFlag = 0; //reset flags for the next turn
     aFlag = 0; //reset flags for the next turn
@@ -235,7 +267,7 @@ void PinA(){
   sei(); //restart interrupts
 }
 
-void PinB(){
+void PinB() {
   cli(); //stop interrupts happening before we read pin values
   reading = PIND & 0xC; //read all eight pin values then strip away all but pinA and pinB's values
   if (reading == B00001100 && bFlag) { //check that we have both pins at detent (HIGH) and that we are expecting detent on this pin's rising edge
@@ -248,15 +280,52 @@ void PinB(){
 }
 
 
-void ds1307RTC(){
+void ds1307RTC() {
   DateTime now = rtc.now();
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print(now.day());
   lcd.print("/");
-  lcd.print(now.month());lcd.print(" ");
+  lcd.print(now.month()); lcd.print(" ");
   lcd.print(now.hour()); lcd.print(":");
   lcd.print(now.minute()); lcd.print(":");
   lcd.print(now.second());
   lcd.print("  ");
 
 }
+
+
+void requestTemp() {
+  int n = Wire.requestFrom(SLAVE_ONE_ADDRESS, 8);  // request 8 bytes (2 doubles) from slave one
+  if (n == 8) {
+    I2C_readAnything(temp);
+    I2C_readAnything(output);
+    Serial.print("Temp : ");
+    Serial.println(temp);
+    Serial.print("Output : ");
+    Serial.println( output);
+  }
+  else Serial.println("FAIL");
+}
+
+void requestMassAndSwitchState() {
+  int n = Wire.requestFrom(SLAVE_TWO_ADDRESS, 7);  // request 7 bytes (1 double, 1 int, 1 boolean) from SLAVE TWO
+  if (n == 7) {
+    I2C_readAnything(brewSwitchState);
+    I2C_readAnything(mass);
+    I2C_readAnything(extractionComplete);
+    Serial.print("Switch state : ");
+    Serial.println(brewSwitchState);
+    Serial.print("Mass : ");
+    Serial.println(mass);
+    Serial.print("Extraction complete?  ");
+    Serial.println(extractionComplete);
+    Serial.println("");
+
+  }
+  else Serial.println("FAIL");
+}
+
+
+
+
+

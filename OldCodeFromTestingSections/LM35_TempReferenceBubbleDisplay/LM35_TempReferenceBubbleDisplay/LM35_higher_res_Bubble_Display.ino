@@ -61,7 +61,7 @@ void setup() {
   pinMode(dataPin, OUTPUT);
 
   analogReference(INTERNAL);
-  Serial.begin(115200);
+  //Serial.begin(115200);
 
   //  ThermistorInside.Pin = THERMISTORPinInside; //Set the pin number.
 
@@ -127,7 +127,7 @@ void loop() {
   //printDisp(ThermistorInside.GetCentigrade(), 2000);
 
   sum = 0; reading = 0;
-  
+
   for (int i=0; i<99; i++){
     reading = analogRead(tempPin);
     sum += reading;

@@ -1,16 +1,16 @@
 Once a job is completed, remove from "TO BE COMPLETED" and add it to "COMPLETED". Add your name after job
 
 
-TO BE COMPLETED (roughly in order of importance)
-Thermistor readings done as a rolling average with outliers rejected
-PID output to control boiler
-Load cell HX711 circuit
-Calibrate load cell
+TO BE COMPLETED
 RTC set preheat and turnoff times/days in Menu 
+RTC read Vcc rails periodically (1hr?) to ensure minimal drift.
 Menu - add MenuItem change set point (brew and steam)
 Menu - add MenuItem change temp scale (C and F)
 Menu - add MenuItem manual tune values (P,I,D)
 Menu - add MenuItem change preinfuson and brew pump characteristics
+Menu - add ability to read Vcc rails for ADC
+Menu - add ability to change number of ADC readings for digitalSmooth
+
 Use Silvia front switches as uC inputs using PS2505
     Brew switch on - starts preinfusion, turns on heater, tares scale, starts shot timer
     Brew switch off - turns off pump, switch heater control back to PID loop, displays shot time and shot mass, 
@@ -30,7 +30,17 @@ Basic Menu using rotary encoder and LCD                                 Ross
 RTC time displayed on LCD                                               Ross
 Thermistor signal conditioning circuit (RC filter and op-amp buffer)    Ross
 Temp displayed on 7-segment bubble display                              Ross
-Code to measure temp from thermistor and calibrate using LM35           Ross   
+Code to measure temp from thermistor and calibrate using LM35           Ross
+PID output to control boiler						Ross
+Load cell HX711 circuit							Ross
+Calibrate load cell
 
-KNOWN PROBLEMS
-5V supply to thermistor and AVcc drifts over time - Ordered precision voltage regulator
+
+
+PROBLEMS TO BE FIXED
+
+Vcc to ADC seems to drift about 0.3V, causing errors in temp readings  
+               
+Switching pump and off using 5V. When active wire only is switched,
+	there is an e humming electrical humming coming from the pump.	FIXED
+	Tried using a triac with no success.	
