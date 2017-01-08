@@ -11,13 +11,22 @@ Menu - add MenuItem change preinfuson and brew pump characteristics
 Menu - add ability to read Vcc rails for ADC
 Menu - add ability to change number of ADC readings for digitalSmooth
 
-Use Silvia front switches as uC inputs using PS2505
-    Brew switch on - starts preinfusion, turns on heater, tares scale, starts shot timer
-    Brew switch off - turns off pump, switch heater control back to PID loop, displays shot time and shot mass, 
-        stores last 5(?) shot times, coffee grinds and shot masses in linked list
-    Steam switch on - change to steam setpoint
-    Steam switch off - change back to brew setpoint
 
+Brew switch on - starts preinfusion, turns on heater, tares scale, starts shot timer
+Brew switch off - turns off pump, switch heater control back to PID loop, displays shot time and shot mass, 
+        stores last 5(?) shot times, coffee grinds and shot masses in linked list
+Steam switch on - change to steam setpoint
+Steam switch off - change back to brew setpoint
+
+Swap out boiler SSR for roll-your-own SSR (MOC3042 and BTA06)
+
+EEPROM - save all parameters in case of power off
+
+Swap DS1307 for DS3231 (Samples currently being shipped)
+
+Find supplier for HX711
+
+Software Schmitt trigger for temp readings
 
 
 
@@ -33,14 +42,23 @@ Temp displayed on 7-segment bubble display                              Ross
 Code to measure temp from thermistor and calibrate using LM35           Ross
 PID output to control boiler						Ross
 Load cell HX711 circuit							Ross
-Calibrate load cell
+Calibrate load cell							Ross
+Use Silvia front switches as uC inputs using PS2505			Ross	some errors
 
 
 
 PROBLEMS TO BE FIXED
 
-Vcc to ADC seems to drift about 0.3V, causing errors in temp readings  
+Vcc to ADC seems to drift about 0.3V, causing errors in temp readings - adjust code so that it measures Vcc periodically 
+
+Master I2C  	- Temp reading correctly
+		- Output reading correctly
+		- Extraction complete reading correctly (although some delay)
+		- Switch state NOT reading correctly
+
+Slave Brew control - some erroneous readings on brew switch state. Currently solved in software, need to fix in hardware
+		- 
                
-Switching pump and off using 5V. When active wire only is switched,
-	there is an e humming electrical humming coming from the pump.	FIXED
-	Tried using a triac with no success.	
+
+
+

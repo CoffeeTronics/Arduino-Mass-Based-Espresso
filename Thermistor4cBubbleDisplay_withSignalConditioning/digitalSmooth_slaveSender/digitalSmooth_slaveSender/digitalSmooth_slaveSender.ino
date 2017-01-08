@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /* digitalSmooth
   Paul Badger 2007
   A digital smoothing filter for smoothing sensor jitter
@@ -154,10 +156,10 @@ void loop() {      // test the digitalSmooth function
   //smoothData1 = digitalSmooth(rawData1, sensSmoothArray1);  // every sensor you use with digitalSmooth needs its own array
   Input = digitalSmooth(rawData1, sensSmoothArray1);  // every sensor you use with digitalSmooth needs its own array
   
-  temp = Input;     // read PID Input & Output
-  output = Output;  // into volatiles used for I2C comms
-
-  
+  //noInterrupts();
+  temp = Input;
+  output = Output;
+  //interrupts();  
   
   myPID.Compute();
   /************************************************

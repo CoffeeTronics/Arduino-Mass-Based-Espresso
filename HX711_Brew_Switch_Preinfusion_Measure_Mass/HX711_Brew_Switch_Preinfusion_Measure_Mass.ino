@@ -55,11 +55,11 @@ void loop() {
   //Serial.print("Switch state : ");
   //Serial.println(brewSwitchState);
 
-  if (brewSwitchState) {           // if brew switch ON
+  if (!brewSwitchState) {           // if brew switch ON
     scale.tare();   // tare scale ready for extraction
 
     for (int i = 0; i < numPulses; i++) {
-      extractionComplete = 0;
+      extractionComplete = false;
 
       Serial.println("Pulsing pump for 1 sec");
       digitalWrite(PUMP_CONTROL, HIGH);           // preinfusion
@@ -73,19 +73,35 @@ void loop() {
     timeNow = timeLast;
     readingTimeNow = timeLast;
 
-    while ((timeNow - timeLast) <= 10000) {  // run pump for 10s or until
+    while ((timeNow - timeLast) <= 3000) {  // run pump for 10s or until
       digitalWrite(PUMP_CONTROL, HIGH);     // user turns off brew switch
       extractionComplete = false;
-      test = digitalRead(BREW_SWITCH);
-      brewSwitchState = test;
-      /*
-      if (brewSwitchState == 0) {
+      //brewSwitchState = digitalRead(BREW_SWITCH);
+      brewSwitchState = 0;
+      for (int i = 0; i < 10; i++) {
+        brewSwitchState += digitalRead(BREW_SWITCH);
+        delay(10);
+      }
+      Serial.print("10 state: ");
+      Serial.println(brewSwitchState);
+      if (brewSwitchState < 5){
+        brewSwitchState = 1;
+      }
+      else {
+        brewSwitchState = 0;
+      }
+      //brewSwitchState = test;
+      
+      if (!brewSwitchState) {
+        Serial.println(brewSwitchState);
         Serial.println("BREW SWITCH OFF!!!!!");
         digitalWrite(PUMP_CONTROL, LOW);  // turn pump off and
         extractionComplete = true;        // tell master we are finished
+        Serial.println("Extraction Complete");
+        delay(1000);
         break;                          // break out of while loop
       }
-      */
+      
       readingTimeNow = millis();
 
       if ((readingTimeNow - readingTimeLast) >= 1000) { //read mass every second
@@ -107,7 +123,7 @@ void loop() {
     digitalWrite(PUMP_CONTROL, LOW);
     brewSwitchState = 0;
     mass = 0.0;
-    Serial.println("Pump off");
+    //Serial.println("Pump off");
   }
 }
 

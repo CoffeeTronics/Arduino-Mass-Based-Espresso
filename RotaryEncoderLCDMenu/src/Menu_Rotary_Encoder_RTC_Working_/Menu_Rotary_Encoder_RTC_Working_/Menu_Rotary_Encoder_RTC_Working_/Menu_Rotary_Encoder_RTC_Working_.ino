@@ -1,9 +1,4 @@
 #include <Arduino.h>
-#include <Wire.h>
-#include <I2C_Anything.h>
-
-const byte SLAVE_ONE_ADDRESS = 42;
-const byte SLAVE_TWO_ADDRESS = 43;
 
 /*
     Copyright Giuseppe Di Cillo (www.coagula.org)
@@ -37,7 +32,13 @@ const byte SLAVE_TWO_ADDRESS = 43;
 #include <MenuBackend.h>    //MenuBackend library - copyright by Alexander Brevig
 #include <LiquidCrystal.h>  //this library is included in the Arduino IDE#include <Wire.h>
 #include "RTClib.h"
+#include <Wire.h>
+#include <I2C_Anything.h>
+
 #define BUTTON_PIN 7
+
+const byte SLAVE_ONE_ADDRESS = 42;
+const byte SLAVE_TWO_ADDRESS = 43;
 
 ////////  Function Prototypes
 static void menuUsed(MenuUseEvent used);
@@ -61,6 +62,7 @@ unsigned long timeNowRTC = 0;
 unsigned long timeLastRTC = 0;
 unsigned long timeNowTempRequest = 0;
 unsigned long timeLastTempRequest = 0;
+
 boolean moveMenuLeft = false;
 boolean moveMenuRight = false;
 boolean encoderButtonPressed = false;
@@ -99,17 +101,8 @@ void setup() {
     while (1);
   }
 
-  if (! rtc.isrunning()) {
-    Serial.println("RTC is NOT running!");
-    // following line sets the RTC to the date & time this sketch was compiled
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-    // This line sets the RTC with an explicit date & time, for example to set
-    // January 21, 2014 at 3am you would call:
-    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
-  }
 
-
-  Wire.begin();
+  //Serial.begin(115200);
 
   lcd.begin(16, 2);
   lcd.print("Espresso Control");
@@ -124,8 +117,11 @@ void setup() {
   menu.toRoot();
   lcd.setCursor(0, 0);
 
+  Wire.begin();
+
 
 }  // setup()...
+
 
 double temp;    // used for receiving I2C data
 double output;  // from SLAVE ONE
@@ -139,18 +135,17 @@ void loop() {
   timeNowRTC = millis();
   if ((timeNowRTC - timeLastRTC) >= 200) {
     ds1307RTC();
-
   }
+
   timeNowTempRequest = millis();
   if ((timeNowTempRequest - timeLastTempRequest) >= 1000) {
     requestTemp();
     requestMassAndSwitchState();
     timeLastTempRequest = timeNowTempRequest;
   }
+
   readButtons();  //I splitted button reading and navigation in two procedures because
   navigateMenus();  //in some situations I want to use the button for other purpose (eg. to change some settings)
-
-
 
 
 
@@ -324,8 +319,3 @@ void requestMassAndSwitchState() {
   }
   else Serial.println("FAIL");
 }
-
-
-
-
-
